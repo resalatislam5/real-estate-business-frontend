@@ -173,7 +173,7 @@ const Navbar = () => {
       {showButton && (
         <Link
           href={"#scrool-top"}
-          className="fixed sm:bottom-8 bottom-5 sm:right-8 right-5 bg-white shadow-md p-2 rounded-full z-50"
+          className="fixed bottom-24 right-8  bg-white shadow-md p-3 rounded-full z-50"
         >
           <IoArrowUpOutline className="text-2xl font-light" />
         </Link>

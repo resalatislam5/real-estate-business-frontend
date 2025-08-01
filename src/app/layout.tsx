@@ -6,6 +6,7 @@ import "./global.css";
 // import "../global.css";
 import { ReduxProvider } from "@/store/provider";
 import { ToastProvider } from "@/components/shared/Tost/ToastProvider";
+import ChatBox from "@/components/utils/chatBox";
 
 // font family
 
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body>
         <ToastProvider>
           <ReduxProvider>
-            <main>{children}</main>
+            <ChatBox>
+              <main>{children}</main>
+            </ChatBox>
           </ReduxProvider>
         </ToastProvider>
       </body>
