@@ -4,7 +4,7 @@ import PropertiesDetails from "./PropertiesDetails";
 interface propsType {
   slug: string;
 }
-const page = async ({ params }: { params: propsType }) => {
+export default async function Page({ params }: { params: propsType }) {
   const slug = params?.slug;
   const data = await getApiWithAuthentication(`properties/${slug}`);
   console.log("data properties details", data);
@@ -14,6 +14,4 @@ const page = async ({ params }: { params: propsType }) => {
       <PropertiesDetails item={data} />
     </div>
   );
-};
-
-export default page;
+}

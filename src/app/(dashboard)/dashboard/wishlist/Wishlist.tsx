@@ -1,5 +1,5 @@
 "use client";
-import Card from "@/components/shared/Card/Card";
+// import Card from "@/components/shared/Card/Card";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 
@@ -17,9 +17,9 @@ const Wishlist = () => {
       </div>
       {items?.wishlist?.length > 0 ? (
         <div className="flex flex-wrap gap-4 sm:mt-10 mt-5">
-          {items?.wishlist?.map((e, i) => (
+          {/* {items?.wishlist?.map((e, i) => (
             <Card wishlist={true} style="md:max-w-80" link={5} key={i} />
-          ))}
+          ))} */}
         </div>
       ) : (
         <p className="sm:mt-10 mt-5 italic">

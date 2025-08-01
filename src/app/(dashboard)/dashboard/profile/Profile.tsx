@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const Profile = () => {
-  const [state, setState] = useState<Record<string, string>>([]);
+  const [state, setState] = useState<Record<string, string>>({});
 
   const user = useSelector((state: RootState) => state.user.user);
 

@@ -14,7 +14,7 @@ const EditProfile = ({
   // show image
   const [image, setImage] = useState<File | null>(null);
   // show image
-  const [oldImage, setOldImage] = useState<string | null>(initialState.image);
+  const [oldImage] = useState<string | null>(initialState.image);
   // handle Loading
   const [isLoading, setIsLoading] = useState(false);
 

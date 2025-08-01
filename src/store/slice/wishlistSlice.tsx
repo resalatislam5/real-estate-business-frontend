@@ -51,7 +51,7 @@ export const wishlistSlice = createSlice({
       state.isLoading = false;
       state.wishlist = action.payload;
     });
-    builder.addCase(addWishlist.rejected, (state, action) => {
+    builder.addCase(addWishlist.rejected, (state) => {
       state.isLoading = false;
       state.error = "error";
     });
