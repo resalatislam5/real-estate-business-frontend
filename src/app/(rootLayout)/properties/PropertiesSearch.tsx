@@ -1,6 +1,8 @@
 "use client";
+import useInputData from "@/components/hooks/useInputData";
 import CustomLink from "@/components/shared/CustomLink";
 import { shortId } from "@/components/utils/shortId";
+import { propertiesSearchTypes } from "@/constant/interfaceItems";
 import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 
@@ -85,9 +87,37 @@ const advancedSearchCheckItems = [
     name: "Window Covering",
   },
 ];
-const PropertiesSearch = () => {
+
+const initialPropertiesSearchItems = {
+  Bathrooms: "",
+  Bedrooms: "",
+  city: "",
+  max_price: "",
+  min_price: "",
+  property_status: "",
+  property_type: "",
+  title: "",
+  division: "",
+};
+const PropertiesSearch = ({
+  handleSearch,
+}: {
+  handleSearch: (state: propertiesSearchTypes) => void;
+}) => {
   const [openAdvancedSearch, setOpenAdvancedSearch] = useState(false);
   const advanceSearchRef = useRef<HTMLDivElement>(null);
+
+  // search function implement
+  const { handleInputState, inputState } = useInputData(
+    initialPropertiesSearchItems
+  );
+  const [handleOthersTags, setHandleOtherTags] = useState<
+    Record<string, string[]>
+  >({ tags: [] });
+
+  useEffect(() => {
+    handleSearch({ ...inputState, ...handleOthersTags });
+  }, [inputState, handleOthersTags]);
 
   const handleAdvancedSearch = () => {
     setOpenAdvancedSearch(!openAdvancedSearch);
@@ -118,12 +148,15 @@ const PropertiesSearch = () => {
           type="text"
           className="properties-search sm:min-w-80"
           placeholder="Enter your key..."
+          name="title"
+          onChange={handleInputState}
         />
         <select
           className="properties-search"
-          name=""
           id=""
-          defaultValue={"test"}
+          defaultValue={inputState.property_type}
+          name="property_type"
+          onChange={handleInputState}
         >
           <option>Property Type</option>
           {PropertiesItems.map((e) => {
@@ -136,9 +169,10 @@ const PropertiesSearch = () => {
         </select>
         <select
           className="properties-search"
-          name=""
           id=""
-          defaultValue={"test"}
+          defaultValue={inputState.division}
+          name="division"
+          onChange={handleInputState}
         >
           <option>Location</option>
           {LocationItems.map((e) => {
@@ -167,9 +201,12 @@ const PropertiesSearch = () => {
                 <select
                   key={e.id}
                   className="border bg-[#F7F8FA] min-w-full py-4 px-2 rounded-lg"
-                  name=""
                   id=""
-                  defaultValue={"test"}
+                  defaultValue={
+                    inputState[e.name as keyof propertiesSearchTypes]
+                  }
+                  name={e.name}
+                  onChange={handleInputState}
                 >
                   <option>{e.name}</option>
                   {e?.value?.map((e) => {
@@ -186,24 +223,49 @@ const PropertiesSearch = () => {
               <div className="flex flex-col gap-5">
                 <div className="">
                   <input
-                    type="text"
+                    type="number"
                     className="border bg-[#F7F8FA] min-w-full py-4 px-2 rounded-lg"
                     placeholder="Min Price"
+                    name="min_price"
+                    defaultValue={inputState.min_price}
+                    onChange={handleInputState}
                   />
                 </div>
                 <div className="">
                   <input
-                    type="text"
+                    type="number"
                     className="border bg-[#F7F8FA] min-w-full py-4 px-2 rounded-lg"
                     placeholder="Max Price"
+                    name="max_price"
+                    defaultValue={inputState.max_price}
+                    onChange={handleInputState}
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 max-[420px]:grid-cols-1 gap-5 pt-3 md:pt-0">
                 {advancedSearchCheckItems.map((e) => (
                   <div key={e.id} className="flex items-center gap-2">
-                    <input type="checkbox" name="" id="" />
-                    <label htmlFor="">{e.name}</label>
+                    <input
+                      type="checkbox"
+                      id="tags"
+                      name="tags"
+                      onClick={(item) => {
+                        const target = item.target as HTMLInputElement;
+                        const tag = target.checked;
+                        if (!tag) {
+                          const newTags = handleOthersTags.tags.filter(
+                            (tag) => tag !== e.name
+                          );
+                          setHandleOtherTags({ tags: newTags });
+                        }
+                        if (tag) {
+                          setHandleOtherTags({
+                            tags: [e.name, ...handleOthersTags["tags"]],
+                          });
+                        }
+                      }}
+                    />
+                    <label htmlFor="tags">{e.name}</label>
                   </div>
                 ))}
               </div>

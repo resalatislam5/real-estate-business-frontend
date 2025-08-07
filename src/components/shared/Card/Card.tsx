@@ -43,7 +43,7 @@ const Card = ({
             width={600}
             height={300}
             className="rounded-t-lg group-hover:scale-125 duration-1000 w-[600px] h-[300px]"
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item?.image}`}
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${item?.image}`}
             alt="p"
           />
           <div className="group-hover:flex hidden w-full h-full bg-black opacity-40 absolute top-0 rounded-t-lg"></div>

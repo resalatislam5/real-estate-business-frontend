@@ -52,7 +52,6 @@ const EditProperty = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
     let imageData = undefined;
     if (image) {
       const imageForm = new FormData();

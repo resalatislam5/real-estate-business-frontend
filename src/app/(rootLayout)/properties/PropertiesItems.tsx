@@ -40,20 +40,21 @@ const PropertiesItems = ({ items }: { items: propertiesDetailsTypes[] }) => {
     <section className="inner-main-width !mb-0 sm:pb-20 pb-10  sm:text-lg text-base">
       <div className="flex flex-wrap gap-3 justify-between items-center">
         <p className="">
-          {" "}
-          <span className="font-semibold">{items?.length}</span>
-          Search Result
+          <span className="font-semibold">{items?.length}</span> Search Result
         </p>
         <div className="items-flex-2">
-          <div className="items-flex-2 uppercase font-semibold">
+          <label
+            htmlFor="shorting"
+            className="items-flex-2 uppercase font-semibold"
+          >
             <HiAdjustmentsHorizontal />
             <p>SHORT BY: </p>
-          </div>
+          </label>
           <div className="">
             <select
               className="bg-transparent text-gray-600"
               name=""
-              id=""
+              id="shorting"
               defaultValue={"test"}
             >
               <option>Top Selling</option>

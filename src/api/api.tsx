@@ -6,6 +6,8 @@ const authCookie = cookie ? JSON.parse(cookie as string) : "";
 
 const token = authCookie?.token;
 
+console.log("token", token);
+
 export const postApiWithNoAuthentication = async (
   object: unknown,
   path: string

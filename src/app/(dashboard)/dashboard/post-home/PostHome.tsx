@@ -67,6 +67,8 @@ const PostHome = () => {
     imageForm.append("file", image);
 
     const imageData = await postApiImage(imageForm, "?folder=properties");
+    console.log("imageData", imageData);
+
     if (!imageData?.path) {
       setLoading(false);
       toast.error("try again");
