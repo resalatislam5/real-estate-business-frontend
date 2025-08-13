@@ -37,7 +37,7 @@ const Profile = () => {
             </label>
             {state.image ? (
               <Image
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${state.image}`}
+                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${state.image}`}
                 alt=""
                 width={300}
                 height={300}

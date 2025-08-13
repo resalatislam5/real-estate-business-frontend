@@ -25,13 +25,13 @@ export interface propertiesDetailsTypes {
 }
 
 export interface propertiesSearchTypes {
-  Bathrooms: string;
-  Bedrooms: string;
-  city: string;
-  max_price: string;
-  min_price: string;
-  property_status: string;
-  property_type: string;
-  title: string;
-  division: string;
+  Bathrooms?: string;
+  Bedrooms?: string;
+  city?: string;
+  max_price?: string;
+  min_price?: string;
+  property_status?: string;
+  property_type?: string;
+  title?: string;
+  division?: string;
 }

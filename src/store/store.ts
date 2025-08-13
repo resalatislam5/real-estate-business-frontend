@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { wishlistSlice } from "./slice/wishlistSlice";
 import { authSlice } from "./slice/authSlice";
+import propertiesSlice from "./slice/propertiesSlice";
 
 export const store = configureStore({
   reducer: {
     wishlist: wishlistSlice.reducer,
     user: authSlice.reducer,
+    properties: propertiesSlice,
   },
 });
 
