@@ -128,7 +128,9 @@ const Card = ({
                   Edit
                 </CustomLink>
                 <button
-                  onClick={() => deleteProperty(`${item?._id}`)}
+                  onClick={() => {
+                    deleteProperty(`${item?._id}`);
+                  }}
                   className="px-5 py-2 w-full bg-primary text-white rounded-lg"
                 >
                   Delete

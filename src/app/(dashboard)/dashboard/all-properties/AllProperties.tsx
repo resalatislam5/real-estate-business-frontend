@@ -21,6 +21,7 @@ const AllProperties = () => {
   console.log("properties", items);
 
   const deleteProperty = async (id: string) => {
+    // TODO: Alert implement
     const data = await deleteSingleApiWithAuthentication("properties", id);
     if (data.error) {
       toast.error(data.message);

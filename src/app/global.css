@@ -68,3 +68,8 @@ body {
     animation: slide-in 0.3s ease-out forwards;
   }
 }
+/* swiper js style css */
+
+.swiper-pagination-bullet-active {
+  @apply !bg-primary;
+}

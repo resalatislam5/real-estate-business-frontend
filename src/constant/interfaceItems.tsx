@@ -35,3 +35,11 @@ export interface propertiesSearchTypes {
   title?: string;
   division?: string;
 }
+
+export interface testimonialTypes {
+  _id?: string;
+  image: string;
+  name: string;
+  profession: string;
+  description: string;
+}

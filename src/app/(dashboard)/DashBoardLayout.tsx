@@ -16,6 +16,8 @@ import {
   MdAddHomeWork,
   MdHomeWork,
   MdOutlineKeyboardArrowDown,
+  MdRateReview,
+  MdReviews,
 } from "react-icons/md";
 import { useSelector } from "react-redux";
 
@@ -67,13 +69,13 @@ const dashBoardNavItems = {
     },
     {
       id: shortId(),
-      name: "Properties",
+      name: "All Properties",
       icon: <MdHomeWork />,
       to: "/dashboard/all-properties",
     },
     {
       id: shortId(),
-      name: "Post properties",
+      name: "Create Properties",
       icon: <MdAddHomeWork />,
       to: "/dashboard/post-home",
     },
@@ -82,6 +84,18 @@ const dashBoardNavItems = {
       name: "All Users",
       icon: <HiUsers />,
       to: "/dashboard/all-users",
+    },
+    {
+      id: shortId(),
+      name: "All Testimonial",
+      icon: <MdReviews />,
+      to: "/dashboard/all-testimonial",
+    },
+    {
+      id: shortId(),
+      name: "Create Testimonial",
+      icon: <MdRateReview />,
+      to: "/dashboard/create-testimonial",
     },
   ],
 };
