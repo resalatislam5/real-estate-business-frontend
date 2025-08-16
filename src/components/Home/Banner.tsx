@@ -75,12 +75,19 @@ const Banner = () => {
                 onChange={handleInputState}
               />
 
-              <CustomLink style="bg-primary text-white sm:!px-6 !px-2 hover:!bg-white hover:!text-primary">
+              <CustomLink
+                to="/properties"
+                style="bg-primary text-white sm:!px-6 !px-2 hover:!bg-white hover:!text-primary"
+              >
                 <span className="sm:block hidden">Search</span> <IoSearch />
               </CustomLink>
             </div>
             {/* show search data */}
             <div className="w-full bg-white absolute rounded-md">
+              {inputState.location.length > 2 &&
+                searchProperties.length === 0 && (
+                  <p className="pl-5 py-3 text-gray-500">Product Not Found</p>
+                )}
               {searchProperties?.slice(0, 4).map((item, i) => (
                 <Link
                   href={`/properties/${item._id}`}

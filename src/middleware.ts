@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const user = request.cookies.get("auth")?.value;
   const loginUser = user ? JSON.parse(user) : null;
+  console.log("loginUser", loginUser);
 
   const loginUserNotAccessPath =
     request.nextUrl.pathname == "/login" ||
@@ -14,7 +15,9 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
-  const normalUser = request.nextUrl.pathname === "/dashboard/wishlist";
+  const normalUser =
+    request.nextUrl.pathname === "/dashboard/wishlist" ||
+    request.nextUrl.pathname.startsWith("/dashboard/profile");
   if (normalUser) {
     if (!(loginUser?.role === "user" || loginUser?.role === "admin")) {
       return NextResponse.redirect(new URL("/login", request.url));
@@ -24,7 +27,12 @@ export function middleware(request: NextRequest) {
     request.nextUrl.pathname === "/dashboard/message" ||
     request.nextUrl.pathname === "/dashboard/post-home" ||
     request.nextUrl.pathname === "/dashboard/all-properties" ||
-    request.nextUrl.pathname.startsWith("/dashboard/edit-property/");
+    request.nextUrl.pathname.startsWith("/dashboard/edit-property") ||
+    request.nextUrl.pathname.startsWith("/dashboard/edit-testimonial") ||
+    request.nextUrl.pathname === "/dashboard/all-testimonial" ||
+    request.nextUrl.pathname === "/dashboard/create-testimonial" ||
+    request.nextUrl.pathname === "/dashboard/all-user";
+
   if (adminUserRoute) {
     console.log("/dashboard/admin");
 

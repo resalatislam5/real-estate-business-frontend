@@ -4,7 +4,6 @@ import useInputData from "@/components/hooks/useInputData";
 import { toast } from "@/components/shared/Tost/toast";
 import { addUser } from "@/store/slice/authSlice";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
@@ -47,7 +46,9 @@ const Login = () => {
     );
     toast.success(userdata?.message);
 
-    redirect("/");
+    // redirect("/");
+    //! full reload page because cookie set in frontend not backend. then page not reload cookie not found
+    window.location.href = "/";
   };
 
   return (

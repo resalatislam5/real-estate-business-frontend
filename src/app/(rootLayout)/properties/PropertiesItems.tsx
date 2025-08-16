@@ -4,7 +4,13 @@ import { propertiesDetailsTypes } from "@/constant/interfaceItems";
 import { useEffect, useRef, useState } from "react";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 
-const PropertiesItems = ({ items }: { items: propertiesDetailsTypes[] }) => {
+const PropertiesItems = ({
+  items,
+  setOpenSearchFilter,
+}: {
+  items: propertiesDetailsTypes[];
+  setOpenSearchFilter: (state: boolean) => void;
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
   const [itemsCount, setItemsCount] = useState(12);
@@ -17,13 +23,14 @@ const PropertiesItems = ({ items }: { items: propertiesDetailsTypes[] }) => {
       { threshold: 0.1 } // Trigger when at least 10% of the component is visible
     );
 
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
+    const node = elementRef.current;
+    if (node) {
+      observer.observe(node);
     }
 
     return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current);
+      if (node) {
+        observer.unobserve(node);
       }
     };
   }, []);
@@ -37,12 +44,13 @@ const PropertiesItems = ({ items }: { items: propertiesDetailsTypes[] }) => {
     return () => clearTimeout(timer);
   }, [isVisible]);
   return (
-    <section className="inner-main-width !mb-0 sm:pb-20 pb-10  sm:text-lg text-base">
+    <section className="inner-main-width !mb-0 sm:pb-20 pb-10  sm:text-lg text-base md:pt-0 pt-5">
       <div className="flex flex-wrap gap-3 justify-between items-center">
         <p className="">
           <span className="font-semibold">{items?.length}</span> Search Result
         </p>
-        <div className="items-flex-2">
+        {/* desktop show */}
+        <div className="md:flex gap-2 items-center hidden">
           <label
             htmlFor="shorting"
             className="items-flex-2 uppercase font-semibold"
@@ -57,13 +65,25 @@ const PropertiesItems = ({ items }: { items: propertiesDetailsTypes[] }) => {
               id="shorting"
               defaultValue={"test"}
             >
-              <option>Top Selling</option>
-              <option>Price</option>
+              <option>New House</option>
               <option>Low to High</option>
               <option>High to Low</option>
             </select>
           </div>
         </div>
+        {/* tablet show */}
+        <button
+          onClick={() => setOpenSearchFilter(true)}
+          className="flex md:hidden"
+        >
+          <label
+            htmlFor="shorting"
+            className="items-flex-2 uppercase font-semibold"
+          >
+            <HiAdjustmentsHorizontal />
+            <p>SHORT</p>
+          </label>
+        </button>
       </div>
       <div className="sm:mt-16 mt-8 sm:grid gap-8 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1">
         {items.map((e) => (

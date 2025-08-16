@@ -11,6 +11,9 @@ import { useState } from "react";
 
 const Properties = ({ items }: { items: propertiesDetailsTypes[] }) => {
   const [newItems, setNewItems] = useState(items);
+  // openSearchFilter
+  const [openSearchFilter, setOpenSearchFilter] = useState(false);
+
   const BreadcrumbItems = [
     { id: shortId(), name: "Home", to: "/" }, // Home page
     { id: shortId(), name: "property", to: "#" }, // Property page
@@ -19,18 +22,30 @@ const Properties = ({ items }: { items: propertiesDetailsTypes[] }) => {
   // handle search functionality
   const handleSearch = (value: propertiesSearchTypes) => {
     console.log("handleSearch", value);
-    const filteredItems = items.filter((e) => {
-      const title = e?.title?.includes(value.title || "");
-      const propertyTypes = e?.property_type?.includes(
-        value.property_type || ""
-      );
-      const location = e?.division?.includes(value.division || "");
-      const propertyStatus = e?.property_status?.includes(
-        value.property_status || ""
-      );
 
-      const beds = e?.beds?.toString()?.includes(value.Bedrooms || "");
-      const bath = e?.baths?.toString()?.includes(value.Bathrooms || "");
+    const filteredItems = items.filter((e) => {
+      const title = e?.title
+        ?.toLocaleLowerCase()
+        ?.includes(value?.title?.toLocaleLowerCase() || "");
+      const propertyTypes = e?.property_type
+        ?.toLocaleLowerCase()
+        ?.includes(value?.property_type?.toLocaleLowerCase() || "");
+      const location = e?.division
+        ?.toLocaleLowerCase()
+        ?.includes(value?.division?.toLocaleLowerCase() || "");
+      const propertyStatus = e?.property_status
+        ?.toLocaleLowerCase()
+        ?.includes(value.property_status?.toLocaleLowerCase() || "");
+      console.log("propertyStatus", propertyStatus, value.property_status);
+
+      const beds = e?.beds
+        ?.toString()
+        ?.toLocaleLowerCase()
+        ?.includes(value.Bedrooms?.toLocaleLowerCase() || "");
+      const bath = e?.baths
+        ?.toString()
+        ?.toLocaleLowerCase()
+        ?.includes(value?.Bathrooms?.toLocaleLowerCase() || "");
       let min_price = true;
       if (value.min_price) {
         min_price = e?.price >= Number(value.min_price);
@@ -55,11 +70,18 @@ const Properties = ({ items }: { items: propertiesDetailsTypes[] }) => {
   };
 
   return (
-    <>
+    <div className="relative">
       <Breadcrumb items={BreadcrumbItems} style="!my-0" />
-      <PropertiesSearch handleSearch={handleSearch} />
-      <PropertiesItems items={newItems} />
-    </>
+      <PropertiesSearch
+        openSearchFilter={openSearchFilter}
+        setOpenSearchFilter={setOpenSearchFilter}
+        handleSearch={handleSearch}
+      />
+      <PropertiesItems
+        items={newItems}
+        setOpenSearchFilter={setOpenSearchFilter}
+      />
+    </div>
   );
 };
 

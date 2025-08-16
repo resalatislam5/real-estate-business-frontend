@@ -8,7 +8,9 @@ interface Items {
 
 const Breadcrumb = ({ style, items }: { style?: string; items: Items[] }) => {
   return (
-    <section className={`${style} inner-main-width !mb-10 sm:pt-10 pt-5`}>
+    <section
+      className={`${style} inner-main-width !mb-10 sm:pt-10 pt-5 md:flex hidden`}
+    >
       <div className="flex items-center flex-wrap">
         {items.map((e, index) => {
           return (

@@ -1,5 +1,6 @@
 import { searchByCityItems } from "@/constant";
 import HomeSection from "./HomeSection";
+import Image from "next/image";
 
 const HomeExploreApartment = () => {
   return (
@@ -16,10 +17,12 @@ const HomeExploreApartment = () => {
             key={e.id}
           >
             <div className={`sm:h-full w-full overflow-hidden rounded-xl`}>
-              <img
+              <Image
                 className="w-full sm:h-full group-hover:scale-125 h-52 rounded-xl duration-500 "
                 src={e.img}
                 alt={e.name}
+                width={200}
+                height={208}
               />
               <div className="w-full h-full bg-black opacity-20 absolute top-0 rounded-xl"></div>
             </div>

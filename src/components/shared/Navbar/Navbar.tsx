@@ -51,13 +51,13 @@ const Navbar = () => {
   return (
     <header
       id="scrool-top"
-      className={`${open && "!mb-0"} relative sm:mb-[100px] mb-[80px]`}
+      className={`${open && "!mb-0"} relative msm:mb-[100px] mb-[80px]`}
     >
       {/* responsive mobile navbar */}
       <div
         className={`${
           open ? "w-full block" : "w-0 hidden"
-        } bg-white h-screen fixed overflow-y-scroll pb-5 z-20`}
+        } bg-white h-screen fixed top-0 overflow-y-scroll pb-5 z-20`}
       >
         {/* logo */}
         <div className="flex justify-between items-center p-5 shadow-lg ">
@@ -84,6 +84,17 @@ const Navbar = () => {
                 <hr className="mt-3" />
               </Link>
             ))}
+
+            {user?.token && (
+              <Link
+                onClick={() => setOpen(false)}
+                className="hover:text-primary"
+                href={"/dashboard/wishlist"}
+              >
+                Dashboard
+                <hr className="mt-3" />
+              </Link>
+            )}
           </div>
           <div className="mt-10 flex flex-col gap-3">
             <h1 className="text-3xl text-gray-600">Contact Us</h1>
@@ -93,9 +104,13 @@ const Navbar = () => {
                 resalatislam5@gmail.com
               </a>
             </div>
-            <CustomLink style="w-fit" to="/login">
-              Login
-            </CustomLink>
+            {!user?.token && (
+              <button onClick={() => setOpen(false)}>
+                <CustomLink style="w-fit" to="/login">
+                  Login
+                </CustomLink>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -113,7 +128,7 @@ const Navbar = () => {
               href={"/"}
             >
               <Image width={50} height={50} src={"/logo.png"} alt="logo" />{" "}
-              <span className="font-light">Real estate</span>
+              <span className="font-light md:flex hidden">Real estate</span>
             </Link>
           </div>
           {/* main items */}

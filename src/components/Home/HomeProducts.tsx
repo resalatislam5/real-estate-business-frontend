@@ -26,7 +26,7 @@ const HomeProducts = async () => {
       </div>
       <div className="flex justify-center mt-8">
         <CustomLink
-          to="/"
+          to="/properties"
           style="w-fit bg-primary hover:!bg-white hover:!text-primary text-white"
         >
           View More
