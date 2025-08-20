@@ -3,10 +3,11 @@ import {
   deleteSingleApiWithAuthentication,
   getApiWithAuthentication,
 } from "@/api/api";
-import usePopUpData from "@/components/hooks/usePopUpData";
+import useMiddlewareAuthLoading from "@/components/hooks/useMiddlewareAuthLoading";
 import DashboardTitle from "@/components/shared/DashboardTitle/DashboardTitle";
-import PopUpAlert from "@/components/shared/PopUpAlert/PopUpAlert";
+import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import PopUpDetails from "@/components/shared/PopUpDetails/PopUpDetails";
+import { toast } from "@/components/shared/Tost/toast";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
@@ -22,32 +23,27 @@ interface UsersType {
 }
 
 const AllUsers = () => {
+  const [isLocalLoading, setIsLocalLoading] = useState(false);
   // all contact data
   const [users, setUsers] = useState<UsersType[]>([]);
-
+  // handle auth loading
+  const { isLoading } = useMiddlewareAuthLoading(isLocalLoading);
   // open single popup
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   // open single popup
   const [popUpData, setPopUpData] = useState<Partial<UsersType>>({});
-  // popUp
-  const {
-    isOpen: isOpenError,
-    msg: msgError,
-    setIsOpen: setIsOpenError,
-    setMsg: setMsgError,
-  } = usePopUpData();
-  const { isOpen, msg, setIsOpen, setMsg } = usePopUpData();
 
   // get all Contact data
   const handleContactData = async () => {
+    setIsLocalLoading(true);
     const data = await getApiWithAuthentication("auth");
     console.log("users", data);
 
     if (data?.error) {
-      setIsOpenError(true);
-      setMsgError(data?.message);
+      toast.error(data.message);
     }
     setUsers(data);
+    setIsLocalLoading(false);
   };
 
   // Delete one contact data
@@ -60,8 +56,7 @@ const AllUsers = () => {
       if (data) {
         const newData = users.filter((e) => e._id !== data?.data?._id);
         setUsers(newData);
-        setIsOpen(true);
-        setMsg(data.message);
+        toast.success(data.message);
       }
     }
   };
@@ -75,15 +70,16 @@ const AllUsers = () => {
     handleContactData();
   }, []);
 
+  // count spinner
+  const countSpinner =
+    users.length > 0 ? (
+      users?.length
+    ) : (
+      <LoadingSuspense style="!w-5 inline-block !my-auto !h-5" />
+    );
+
   return (
     <>
-      <PopUpAlert
-        isOpen={isOpenError}
-        setIsOpen={setIsOpenError}
-        text={msgError}
-        success={false}
-      />
-      <PopUpAlert isOpen={isOpen} setIsOpen={setIsOpen} text={msg} success />
       <PopUpDetails isOpen={isPopUpOpen} setIsOpen={setIsPopUpOpen}>
         <h1 className="font-semibold text-2xl text-center">Contact Details</h1>
         <div className="flex flex-col gap-4 text-lg font-semibold">
@@ -116,53 +112,63 @@ const AllUsers = () => {
         </div>
       </PopUpDetails>
       <div className="max-w-[2500px]">
-        <DashboardTitle name="Total Users" count={users.length} />
-        {/* table list */}
-        {users?.length > 0 ? (
-          <div className="sm:mt-10 mt-5 overflow-x-auto md:max-w-full md:min-w-full sm:max-w-[500px] max-w-[250px]">
-            <table className="border-separate border-spacing-0 table-auto min-w-full max-w-full px-5">
-              <thead className="text-left mb-10">
-                <tr className="text-2xl">
-                  <th className="p-5">Name</th>
-                  <th className="p-5">Email</th>
-                  <th className="p-5">Role</th>
-                  <th className="p-5">Details</th>
-                  {/* <th>Delete</th> */}
-                </tr>
-              </thead>
-              <tbody className="">
-                {users?.map((e) => (
-                  <tr
-                    className="odd:bg-gray-50 hover:cursor-pointer"
-                    key={e._id}
-                  >
-                    <td className="p-5">{e.name}</td>
-                    <td className="p-5">{e.email}</td>
-                    <td className="p-5">{e.role}</td>
-
-                    <td className="p-5">
-                      <button
-                        onClick={() => handlePopUpData(e)}
-                        className="text-orange-500"
-                      >
-                        See more
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleDeleteOne(e._id)}
-                        className="text-2xl text-red-500 "
-                      >
-                        <AiOutlineClose />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <DashboardTitle name="Total Users" count={countSpinner} />
+        {isLoading ? (
+          <div className="mt-10">
+            {[...Array(9)].map((_, i) => (
+              <LoadingSuspense key={i} style="!h-7" />
+            ))}
           </div>
         ) : (
-          <p className="sm:mt-10 mt-5 italic">No User Found</p>
+          <>
+            {/* table list */}
+            {users?.length > 0 ? (
+              <div className="sm:mt-10 mt-5 overflow-x-auto md:max-w-full md:min-w-full sm:max-w-[500px] max-w-[250px]">
+                <table className="border-separate border-spacing-0 table-auto min-w-full max-w-full px-5">
+                  <thead className="text-left mb-10">
+                    <tr className="text-2xl">
+                      <th className="p-5">Name</th>
+                      <th className="p-5">Email</th>
+                      <th className="p-5">Role</th>
+                      <th className="p-5">Details</th>
+                      {/* <th>Delete</th> */}
+                    </tr>
+                  </thead>
+                  <tbody className="">
+                    {users?.map((e) => (
+                      <tr
+                        className="odd:bg-gray-50 hover:cursor-pointer"
+                        key={e._id}
+                      >
+                        <td className="p-5">{e.name}</td>
+                        <td className="p-5">{e.email}</td>
+                        <td className="p-5">{e.role}</td>
+
+                        <td className="p-5">
+                          <button
+                            onClick={() => handlePopUpData(e)}
+                            className="text-orange-500"
+                          >
+                            See more
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => handleDeleteOne(e._id)}
+                            className="text-2xl text-red-500 "
+                          >
+                            <AiOutlineClose />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="sm:mt-10 mt-5 italic">No User Found</p>
+            )}
+          </>
         )}
       </div>
     </>

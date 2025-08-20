@@ -1,5 +1,7 @@
 "use client";
 import useLogout from "@/components/hooks/useLogout";
+import useMiddlewareAuthLoading from "@/components/hooks/useMiddlewareAuthLoading";
+import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import { shortId } from "@/components/utils/shortId";
 import { RootState } from "@/store/store";
 import Image from "next/image";
@@ -102,11 +104,14 @@ const dashBoardNavItems = {
 const DashBoardLayout = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLogOut, setIsLogOut] = useState(false);
+
   const path = usePathname();
 
   const user = useSelector((state: RootState) => state.user.user);
 
   const { logOut } = useLogout();
+  // middleware auth loading
+  const { isLoading } = useMiddlewareAuthLoading();
 
   return (
     <div className="flex relative">
@@ -125,7 +130,9 @@ const DashBoardLayout = ({ children }: { children: ReactNode }) => {
           {isOpen ? (
             <Image width={30} height={20} src={"/logo.png"} alt="logo" />
           ) : (
-            <p className="text-3xl">Real Estate</p>
+            <Link href={"/"}>
+              <p className="text-3xl">Real Estate</p>
+            </Link>
           )}
           <button onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? (
@@ -142,6 +149,14 @@ const DashBoardLayout = ({ children }: { children: ReactNode }) => {
           } flex flex-col gap-3 text-lg`}
         >
           <p className="text-sm mb-4">Menu</p>
+          {/* loading Menu */}
+          {isLoading && (
+            <div className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <LoadingSuspense key={i} />
+              ))}
+            </div>
+          )}
           {dashBoardNavItems[user?.role as "user" | "admin"]?.map((e) => (
             <Link
               className={`${
@@ -172,9 +187,29 @@ const DashBoardLayout = ({ children }: { children: ReactNode }) => {
               onClick={() => setIsLogOut(!isLogOut)}
               className="flex justify-end items-center h-full gap-3"
             >
-              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-
-              <p className="">{user?.name}</p>
+              {isLoading ? (
+                <>
+                  <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse" />
+                  <LoadingSuspense style="!w-9" />
+                </>
+              ) : (
+                <>
+                  <div className="w-10 h-10">
+                    {user?.image ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user?.image}`}
+                        alt={user.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                    )}
+                  </div>
+                  <p className="">{user?.name}</p>
+                </>
+              )}
               <MdOutlineKeyboardArrowDown />
             </div>
             {/*  */}

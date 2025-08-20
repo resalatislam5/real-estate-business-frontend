@@ -1,28 +1,34 @@
 "use client";
 import { getApiWithAuthentication } from "@/api/api";
+import useMiddlewareAuthLoading from "@/components/hooks/useMiddlewareAuthLoading";
 import CustomLink from "@/components/shared/CustomLink";
+import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import { toast } from "@/components/shared/Tost/toast";
 import { RootState } from "@/store/store";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const Profile = () => {
   const [state, setState] = useState<Record<string, string>>({});
-
   const user = useSelector((state: RootState) => state.user.user);
-
+  // loading state
+  const [isLoadingLocal, setIsLoadingLocal] = useState(false);
   const fetchData = async () => {
+    setIsLoadingLocal(true);
     const data = await getApiWithAuthentication(`auth/${user._id}`);
-    console.log("profile", data);
 
     if (data.error) {
       toast.error(data.message ?? "Something went wrong");
+      setIsLoadingLocal(false);
       return;
     }
     setState(data);
+    setIsLoadingLocal(false);
   };
 
+  // middleware auth loading
+  const { isLoading } = useMiddlewareAuthLoading(isLoadingLocal);
   useEffect(() => {
     fetchData();
   }, []);
@@ -58,28 +64,30 @@ const Profile = () => {
             <label className="text-xl font-medium" htmlFor="title">
               Name
             </label>
-            <p>- {state.name}</p>
+            {isLoading ? <LoadingSuspense /> : <p>- {state.name}</p>}
           </div>
           {/* Email */}
           <div className="flex flex-col gap-3">
             <label className="text-xl font-medium" htmlFor="title">
               Email
             </label>
-            <p>- {state.email}</p>
+            <Suspense fallback={<LoadingSuspense />}>
+              {isLoading ? <LoadingSuspense /> : <p>- {state.email}</p>}
+            </Suspense>
           </div>
           {/* Number */}
           <div className="flex flex-col gap-3">
             <label className="text-xl font-medium" htmlFor="title">
               Number
             </label>
-            <p>- {state.number}</p>
+            {isLoading ? <LoadingSuspense /> : <p>- {state.number}</p>}
           </div>
           {/* address */}
           <div className="flex flex-col gap-3">
             <label className="text-xl font-medium" htmlFor="title">
               Address
             </label>
-            <p>- {state.address}</p>
+            {isLoading ? <LoadingSuspense /> : <p>- {state.address}</p>}
           </div>
           <CustomLink to={`/dashboard/profile/${state._id}`} style="w-fit mt-5">
             Edit Profile
