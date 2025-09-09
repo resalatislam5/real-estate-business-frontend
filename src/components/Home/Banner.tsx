@@ -96,7 +96,7 @@ const Banner = () => {
                 >
                   <div className="">
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${item?.image}`}
+                      src={`${item?.image}`}
                       alt={item.title}
                       width={100}
                       height={50}

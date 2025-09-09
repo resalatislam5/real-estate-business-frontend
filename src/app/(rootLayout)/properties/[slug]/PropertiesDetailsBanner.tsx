@@ -40,7 +40,7 @@ const PropertiesDetailsBanner = ({
       </div>
       <div className="sm:mt-10 mt-5">
         <Image
-          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${image}`}
+          src={`${image}`}
           alt={title}
           width={1280}
           height={600}
