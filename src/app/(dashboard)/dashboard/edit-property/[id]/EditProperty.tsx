@@ -1,12 +1,12 @@
 "use client";
 
-import { patchApiWithAuthentication, postApiImage } from "@/api/api";
+import { patchApiWithAuthentication } from "@/api/api";
+import useHandleImageUpload from "@/components/hooks/useHandleImageUpload";
 import useInputData from "@/components/hooks/useInputData";
-import usePopUpData from "@/components/hooks/usePopUpData";
-import PopUpAlert from "@/components/shared/PopUpAlert/PopUpAlert";
+import { toast } from "@/components/shared/Tost/toast";
 import { DivisionOptions } from "@/constant";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 const EditProperty = ({
@@ -19,16 +19,15 @@ const EditProperty = ({
   //   handle input state
   const { handleInputState, inputState } = useInputData(initialState);
 
-  // popup error state
-  const {
-    isOpen: isOpenError,
-    msg: msgError,
-    setIsOpen: setIsOpenError,
-    setMsg: setMsgError,
-  } = usePopUpData();
+  // loading state
+  const [isLoading, setIsLoading] = useState(false);
 
-  // popup success
-  const { isOpen, msg, setIsOpen, setMsg } = usePopUpData();
+  // handle image
+
+  const { handleImageUpload } = useHandleImageUpload();
+
+  //
+  const router = useRouter();
   //   extract state
   const {
     address,
@@ -53,60 +52,66 @@ const EditProperty = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let imageData = undefined;
-    if (image) {
-      const imageForm = new FormData();
-      imageForm.append("file", image);
-      imageData = await postApiImage(imageForm, "?folder=properties");
+    setIsLoading(true);
+    try {
+      if (image) {
+        const form = e.target as HTMLFormElement;
+        const inputImage = form.elements.namedItem(
+          "image"
+        ) as HTMLInputElement | null;
+        const image = inputImage?.files?.[0];
+        if (!image) {
+          toast.error("Image not Found");
+          return;
+        }
+        imageData = await handleImageUpload(image);
+      }
+
+      const newData = {
+        address,
+        baths: +baths,
+        beds: +beds,
+        city,
+        country,
+        description,
+        garage: +garage,
+        price: +price,
+        title,
+        garage_size: +garageSize,
+        property_status: propertyStatus,
+        property_type: propertyType,
+        sq_ft: +sqFt,
+        year_built: +yearBuilt,
+        zip_code: +zipCode,
+        video,
+        division,
+        image: initialState?.image,
+        newImage: imageData,
+      };
+      console.log("newData", newData);
+
+      const data = await patchApiWithAuthentication(
+        newData,
+        `properties/${initialState._id}`
+      );
+      console.log("patch-properties", data, imageData);
+
+      if (data.error) {
+        toast.error(data.message);
+        return;
+      }
+
+      toast.success(data.message);
+      router.push("/dashboard/all-properties");
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
     }
-
-    const newData = {
-      address,
-      baths: +baths,
-      beds: +beds,
-      city,
-      country,
-      description,
-      garage: +garage,
-      price: +price,
-      title,
-      garage_size: +garageSize,
-      property_status: propertyStatus,
-      property_type: propertyType,
-      sq_ft: +sqFt,
-      year_built: +yearBuilt,
-      zip_code: +zipCode,
-      video,
-      division,
-      image: initialState?.image,
-      newImage: imageData?.path,
-    };
-    console.log("newData", newData);
-
-    const data = await patchApiWithAuthentication(
-      newData,
-      `properties/${initialState._id}`
-    );
-    console.log("patch-properties", data, imageData);
-
-    if (data.error) {
-      setIsOpenError(true);
-      setMsgError(data.message);
-      return;
-    }
-    setIsOpen(true);
-    setMsg(data.message);
-    redirect("/dashboard/all-properties");
   };
 
   return (
     <>
-      <PopUpAlert
-        isOpen={isOpenError}
-        setIsOpen={setIsOpenError}
-        text={msgError}
-        success={false}
-      />
-      <PopUpAlert isOpen={isOpen} setIsOpen={setIsOpen} text={msg} />
       <div className="">
         <form
           className="gap-5 md:grid grid-cols-2 flex flex-col sm:w-full w-[250px]"
@@ -126,7 +131,7 @@ const EditProperty = ({
               />
             ) : (
               <Image
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${initialState.image}`}
+                src={`${initialState.image}`}
                 alt=""
                 width={300}
                 height={300}
@@ -173,6 +178,7 @@ const EditProperty = ({
               id="price"
               value={price}
               required
+              min={0}
             />
           </div>
           {/* sq ft */}
@@ -188,6 +194,7 @@ const EditProperty = ({
               onChange={handleInputState}
               id="sq-ft"
               value={sqFt}
+              min={0}
               required
             />
           </div>
@@ -222,6 +229,7 @@ const EditProperty = ({
               id="beds"
               value={beds}
               required
+              min={0}
             />
           </div>
           {/* Baths */}
@@ -238,6 +246,7 @@ const EditProperty = ({
               id="baths"
               value={baths}
               required
+              min={0}
             />
           </div>
           {/* Year Built */}
@@ -254,6 +263,7 @@ const EditProperty = ({
               id="year-built"
               value={yearBuilt}
               required
+              min={0}
             />
           </div>
           <div className="flex flex-col gap-3 col-span-2">
@@ -286,6 +296,7 @@ const EditProperty = ({
               id="garage"
               value={garage}
               required
+              min={0}
             />
           </div>
           {/* Garage Size */}
@@ -302,6 +313,7 @@ const EditProperty = ({
               id="garage-size"
               value={garageSize}
               required
+              min={0}
             />
           </div>
           {/* Property Status */}
@@ -401,6 +413,7 @@ const EditProperty = ({
               id="zip-code"
               value={zipCode}
               required
+              min={0}
             />
           </div>
           {/* Country */}
@@ -418,11 +431,20 @@ const EditProperty = ({
               value={country}
             />
           </div>
-          <input
-            type="submit"
-            value="Update"
-            className="col-span-2 mt-4 bg-primary w-full py-3 rounded-lg text-white text-lg cursor-pointer"
-          />
+          {isLoading ? (
+            <input
+              disabled
+              type="button"
+              value="Updating...."
+              className="col-span-2 mt-4 bg-primary w-full py-3 rounded-lg text-white text-lg cursor-pointer"
+            />
+          ) : (
+            <input
+              type="submit"
+              value="Update"
+              className="col-span-2 mt-4 bg-primary w-full py-3 rounded-lg text-white text-lg cursor-pointer"
+            />
+          )}
         </form>
       </div>
     </>

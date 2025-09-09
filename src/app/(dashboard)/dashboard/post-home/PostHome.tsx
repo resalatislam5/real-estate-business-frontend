@@ -1,6 +1,7 @@
 "use client";
 
-import { postApiImage, postApiWithAuthentication } from "@/api/api";
+import { postApiWithAuthentication } from "@/api/api";
+import useHandleImageUpload from "@/components/hooks/useHandleImageUpload";
 import useInputData from "@/components/hooks/useInputData";
 import { toast } from "@/components/shared/Tost/toast";
 import { DivisionOptions } from "@/constant";
@@ -34,6 +35,10 @@ const PostHome = () => {
   const { handleInputState, inputState, resetInputState } =
     useInputData(initialState);
 
+  // handle image
+
+  const { handleImageUpload } = useHandleImageUpload();
+
   //   extract state
   const {
     address,
@@ -57,22 +62,29 @@ const PostHome = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    const form = e.target as HTMLFormElement;
+    const inputImage = form.elements.namedItem(
+      "image"
+    ) as HTMLInputElement | null;
+    const image = inputImage?.files?.[0];
     if (!image) {
       toast.error("Image not Found");
       return;
     }
 
     setLoading(true);
-    const imageForm = new FormData();
-    imageForm.append("file", image);
 
-    const imageData = await postApiImage(imageForm, "?folder=properties");
+    const ImageUrlData = await handleImageUpload(image);
 
-    if (!imageData?.path) {
+    console.log("call first", ImageUrlData);
+
+    if (!ImageUrlData) {
       setLoading(false);
       toast.error("try again");
       return;
     }
+
     const newData = {
       address,
       baths: +baths,
@@ -91,11 +103,11 @@ const PostHome = () => {
       zip_code: +zipCode,
       video,
       division,
-      image: imageData.path,
+      image: ImageUrlData,
     };
 
     const data = await postApiWithAuthentication(newData, "properties");
-    console.log("post-properties", data, imageData);
+    console.log("post-properties", data, ImageUrlData);
 
     if (data.error) {
       setLoading(false);
@@ -171,6 +183,7 @@ const PostHome = () => {
               id="price"
               value={price}
               required
+              min={0}
             />
           </div>
           {/* sq ft */}
@@ -187,6 +200,7 @@ const PostHome = () => {
               id="sq-ft"
               value={sqFt}
               required
+              min={0}
             />
           </div>
           <h2 className="col-span-2 text-3xl">Overview</h2>
@@ -220,6 +234,7 @@ const PostHome = () => {
               id="beds"
               value={beds}
               required
+              min={0}
             />
           </div>
           {/* Baths */}
@@ -236,6 +251,7 @@ const PostHome = () => {
               id="baths"
               value={baths}
               required
+              min={0}
             />
           </div>
           {/* Year Built */}
@@ -252,6 +268,7 @@ const PostHome = () => {
               id="year-built"
               value={yearBuilt}
               required
+              min={0}
             />
           </div>
           {/* des */}
@@ -285,6 +302,7 @@ const PostHome = () => {
               id="garage"
               value={garage}
               required
+              min={0}
             />
           </div>
           {/* Garage Size */}
@@ -301,6 +319,7 @@ const PostHome = () => {
               id="garage-size"
               value={garageSize}
               required
+              min={0}
             />
           </div>
           {/* Property Status */}
@@ -400,6 +419,7 @@ const PostHome = () => {
               id="zip-code"
               value={zipCode}
               required
+              min={0}
             />
           </div>
           {/* Country */}
@@ -419,7 +439,7 @@ const PostHome = () => {
           </div>
           {isLoading ? (
             <button className="col-span-2 mt-4 bg-primary w-full py-3 rounded-lg text-white text-lg ">
-              Loading...
+              Creating...
             </button>
           ) : (
             <input
