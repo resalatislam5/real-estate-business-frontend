@@ -9,7 +9,7 @@ import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import PopUpDetails from "@/components/shared/PopUpDetails/PopUpDetails";
 import { toast } from "@/components/shared/Tost/toast";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
 interface UsersType {
@@ -34,7 +34,7 @@ const AllUsers = () => {
   const [popUpData, setPopUpData] = useState<Partial<UsersType>>({});
 
   // get all Contact data
-  const handleContactData = async () => {
+  const handleContactData = useCallback(async () => {
     setIsLocalLoading(true);
     const data = await getApiWithAuthentication("auth");
     console.log("users", data);
@@ -44,7 +44,7 @@ const AllUsers = () => {
     }
     setUsers(data);
     setIsLocalLoading(false);
-  };
+  }, []);
 
   // Delete one contact data
   const handleDeleteOne = async (id: string) => {
@@ -68,7 +68,7 @@ const AllUsers = () => {
   };
   useEffect(() => {
     handleContactData();
-  }, []);
+  }, [handleContactData]);
 
   // count spinner
   const countSpinner =

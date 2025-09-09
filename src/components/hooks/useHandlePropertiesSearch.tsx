@@ -30,7 +30,7 @@ const useHandlePropertiesSearch = (
 
   useEffect(() => {
     handleSearch({ ...inputState, ...handleOthersTags });
-  }, [inputState, handleOthersTags]);
+  }, [inputState, handleOthersTags, handleSearch]);
 
   const handleAdvancedSearch = () => {
     setOpenAdvancedSearch(!openAdvancedSearch);

@@ -8,7 +8,7 @@ import DashboardTitle from "@/components/shared/DashboardTitle/DashboardTitle";
 import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import PopUpDetails from "@/components/shared/PopUpDetails/PopUpDetails";
 import { toast } from "@/components/shared/Tost/toast";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
 interface ContactType {
@@ -33,7 +33,7 @@ const Message = () => {
   const { isLoading } = useMiddlewareAuthLoading(isLoadingLocal);
 
   // get all Contact data
-  const handleContactData = async () => {
+  const handleContactData = useCallback(async () => {
     setIsLoadingLocal(true);
     const data = await getApiWithAuthentication("contact");
     if (data?.error) {
@@ -41,7 +41,7 @@ const Message = () => {
     }
     setContactData(data?.data);
     setIsLoadingLocal(false);
-  };
+  }, []);
 
   // Delete one contact data
   const handleDeleteOne = async (id: string) => {
@@ -82,7 +82,7 @@ const Message = () => {
 
   useEffect(() => {
     handleContactData();
-  }, []);
+  }, [handleContactData]);
 
   // count spinner
   const countSpinner =

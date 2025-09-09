@@ -106,24 +106,24 @@ export const deleteSingleApiWithAuthentication = async (
 };
 
 // postApiImage
-export const postApiImage = async (formData: FormData, path?: string) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file-upload${path}`,
-      {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      }
-    );
-    return res.json();
-  } catch (err) {
-    console.log(err);
-    return { error: true, message: "Server Problem" };
-  }
-};
+// export const postApiImage = async (formData: FormData, path?: string) => {
+//   try {
+//     const res = await fetch(
+//       `${process.env.NEXT_PUBLIC_BACKEND_URL}/file-upload${path}`,
+//       {
+//         method: "POST",
+//         headers: {
+//           authorization: `Bearer ${token}`,
+//         },
+//         body: formData,
+//       }
+//     );
+//     return res.json();
+//   } catch (err) {
+//     console.log(err);
+//     return { error: true, message: "Server Problem" };
+//   }
+// };
 
 // getApiWithAuthentication
 export const getApiWithServer = async (path: string, token: string) => {

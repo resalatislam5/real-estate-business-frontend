@@ -8,7 +8,7 @@ import Card from "@/components/shared/Card/Card";
 import DashboardTitle from "@/components/shared/DashboardTitle/DashboardTitle";
 import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import { toast } from "@/components/shared/Tost/toast";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const AllProperties = () => {
   const [isLocalLoading, setIsLocalLoading] = useState(false);
@@ -16,12 +16,12 @@ const AllProperties = () => {
 
   // auth loading system hooks
   const { isLoading } = useMiddlewareAuthLoading(isLocalLoading);
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLocalLoading(true);
     const data = await getApiWithAuthentication("properties");
     setItems(data);
     setIsLocalLoading(false);
-  };
+  }, []);
 
   const deleteProperty = async (id: string) => {
     if (window.confirm("Are you sure?")) {
@@ -40,7 +40,7 @@ const AllProperties = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // count spinner
   const countSpinner =

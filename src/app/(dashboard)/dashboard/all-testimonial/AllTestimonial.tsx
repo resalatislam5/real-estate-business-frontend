@@ -10,7 +10,7 @@ import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import { toast } from "@/components/shared/Tost/toast";
 import { testimonialTypes } from "@/constant/interfaceItems";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const AllTestimonial = () => {
   const [isLocalLoading, setIsLocalLoading] = useState(false);
@@ -19,12 +19,12 @@ const AllTestimonial = () => {
   // auth loading system hooks
   const { isLoading } = useMiddlewareAuthLoading(isLocalLoading);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLocalLoading(true);
     const data = await getApiWithAuthentication("testimonial");
     setItems(data);
     setIsLocalLoading(false);
-  };
+  }, []);
 
   const deleteTestimonial = async (id: string) => {
     if (confirm("Are You Sure")) {
@@ -42,7 +42,7 @@ const AllTestimonial = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // count spinner
   const countSpinner =
