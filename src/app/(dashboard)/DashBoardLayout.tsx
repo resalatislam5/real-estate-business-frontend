@@ -197,7 +197,7 @@ const DashBoardLayout = ({ children }: { children: ReactNode }) => {
                   <div className="w-10 h-10">
                     {user?.image ? (
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user?.image}`}
+                        src={`${user?.image}`}
                         alt={user.name}
                         width={40}
                         height={40}

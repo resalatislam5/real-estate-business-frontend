@@ -1,10 +1,11 @@
 "use client";
+import { patchApiWithAuthentication } from "@/api/api";
+import useHandleImageUpload from "@/components/hooks/useHandleImageUpload";
 import useInputData from "@/components/hooks/useInputData";
-import { patchApiWithAuthentication, postApiImage } from "@/api/api";
-import Image from "next/image";
-import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "@/components/shared/Tost/toast";
+import Image from "next/image";
 import { redirect } from "next/navigation";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 const EditProfile = ({
   initialState,
@@ -22,6 +23,9 @@ const EditProfile = ({
   const { handleInputState, inputState } =
     useInputData<Record<string, string>>(initialState);
 
+  // handle image
+
+  const { handleImageUpload } = useHandleImageUpload();
   console.log("inputState", inputState);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -30,9 +34,16 @@ const EditProfile = ({
     setIsLoading(true);
     let imageData = undefined;
     if (image) {
-      const imageForm = new FormData();
-      imageForm.append("file", image);
-      imageData = await postApiImage(imageForm, "?folder=profile");
+      const form = e.target as HTMLFormElement;
+      const inputImage = form.elements.namedItem(
+        "image"
+      ) as HTMLInputElement | null;
+      const image = inputImage?.files?.[0];
+      if (!image) {
+        toast.error("Image not Found");
+        return;
+      }
+      imageData = await handleImageUpload(image);
     }
 
     const data = await patchApiWithAuthentication(
@@ -41,7 +52,7 @@ const EditProfile = ({
         number: inputState.number,
         address: inputState.address,
         image: oldImage,
-        newImage: imageData?.path,
+        newImage: imageData,
       },
       `auth/${initialState._id}`
     );
@@ -75,12 +86,7 @@ const EditProfile = ({
           ) : (
             <>
               {oldImage && (
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${oldImage}`}
-                  alt=""
-                  width={300}
-                  height={300}
-                />
+                <Image src={`${oldImage}`} alt="" width={300} height={300} />
               )}
             </>
           )}
@@ -148,7 +154,7 @@ const EditProfile = ({
         </div>
         {isLoading ? (
           <button className="col-span-2 mt-4 bg-primary w-full py-3 rounded-lg text-white text-lg cursor-pointer">
-            Loading...
+            Updating...
           </button>
         ) : (
           <input

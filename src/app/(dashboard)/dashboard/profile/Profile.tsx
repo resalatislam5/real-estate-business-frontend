@@ -6,7 +6,7 @@ import LoadingSuspense from "@/components/shared/Loading/LoadingSuspense";
 import { toast } from "@/components/shared/Tost/toast";
 import { RootState } from "@/store/store";
 import Image from "next/image";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const Profile = () => {
@@ -14,7 +14,7 @@ const Profile = () => {
   const user = useSelector((state: RootState) => state.user.user);
   // loading state
   const [isLoadingLocal, setIsLoadingLocal] = useState(false);
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoadingLocal(true);
     const data = await getApiWithAuthentication(`auth/${user._id}`);
 
@@ -25,13 +25,13 @@ const Profile = () => {
     }
     setState(data);
     setIsLoadingLocal(false);
-  };
+  }, [user._id]);
 
   // middleware auth loading
   const { isLoading } = useMiddlewareAuthLoading(isLoadingLocal);
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return (
     <>
@@ -43,7 +43,7 @@ const Profile = () => {
             </label>
             {state.image ? (
               <Image
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${state.image}`}
+                src={`${state.image}`}
                 alt=""
                 width={300}
                 height={300}
