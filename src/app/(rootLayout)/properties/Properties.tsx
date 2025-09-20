@@ -7,7 +7,7 @@ import {
   propertiesDetailsTypes,
   propertiesSearchTypes,
 } from "@/constant/interfaceItems";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const Properties = ({ items }: { items: propertiesDetailsTypes[] }) => {
   const [newItems, setNewItems] = useState(items);
@@ -20,54 +20,57 @@ const Properties = ({ items }: { items: propertiesDetailsTypes[] }) => {
   ];
 
   // handle search functionality
-  const handleSearch = (value: propertiesSearchTypes) => {
-    console.log("handleSearch", value);
+  const handleSearch = useCallback(
+    (value: propertiesSearchTypes) => {
+      console.log("handleSearch", value);
 
-    const filteredItems = items.filter((e) => {
-      const title = e?.title
-        ?.toLocaleLowerCase()
-        ?.includes(value?.title?.toLocaleLowerCase() || "");
-      const propertyTypes = e?.property_type
-        ?.toLocaleLowerCase()
-        ?.includes(value?.property_type?.toLocaleLowerCase() || "");
-      const location = e?.division
-        ?.toLocaleLowerCase()
-        ?.includes(value?.division?.toLocaleLowerCase() || "");
-      const propertyStatus = e?.property_status
-        ?.toLocaleLowerCase()
-        ?.includes(value.property_status?.toLocaleLowerCase() || "");
-      console.log("propertyStatus", propertyStatus, value.property_status);
+      const filteredItems = items.filter((e) => {
+        const title = e?.title
+          ?.toLocaleLowerCase()
+          ?.includes(value?.title?.toLocaleLowerCase() || "");
+        const propertyTypes = e?.property_type
+          ?.toLocaleLowerCase()
+          ?.includes(value?.property_type?.toLocaleLowerCase() || "");
+        const location = e?.division
+          ?.toLocaleLowerCase()
+          ?.includes(value?.division?.toLocaleLowerCase() || "");
+        const propertyStatus = e?.property_status
+          ?.toLocaleLowerCase()
+          ?.includes(value.property_status?.toLocaleLowerCase() || "");
+        console.log("propertyStatus", propertyStatus, value.property_status);
 
-      const beds = e?.beds
-        ?.toString()
-        ?.toLocaleLowerCase()
-        ?.includes(value.Bedrooms?.toLocaleLowerCase() || "");
-      const bath = e?.baths
-        ?.toString()
-        ?.toLocaleLowerCase()
-        ?.includes(value?.Bathrooms?.toLocaleLowerCase() || "");
-      let min_price = true;
-      if (value.min_price) {
-        min_price = e?.price >= Number(value.min_price);
-      }
-      let max_price = true;
-      if (value.max_price) {
-        max_price = e?.price <= Number(value.max_price);
-      }
+        const beds = e?.beds
+          ?.toString()
+          ?.toLocaleLowerCase()
+          ?.includes(value.Bedrooms?.toLocaleLowerCase() || "");
+        const bath = e?.baths
+          ?.toString()
+          ?.toLocaleLowerCase()
+          ?.includes(value?.Bathrooms?.toLocaleLowerCase() || "");
+        let min_price = true;
+        if (value.min_price) {
+          min_price = e?.price >= Number(value.min_price);
+        }
+        let max_price = true;
+        if (value.max_price) {
+          max_price = e?.price <= Number(value.max_price);
+        }
 
-      return (
-        title &&
-        propertyTypes &&
-        location &&
-        propertyStatus &&
-        beds &&
-        bath &&
-        min_price &&
-        max_price
-      );
-    });
-    setNewItems(filteredItems);
-  };
+        return (
+          title &&
+          propertyTypes &&
+          location &&
+          propertyStatus &&
+          beds &&
+          bath &&
+          min_price &&
+          max_price
+        );
+      });
+      setNewItems(filteredItems);
+    },
+    [items]
+  );
 
   return (
     <div className="relative">
